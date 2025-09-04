@@ -1,0 +1,38 @@
+## `.gitignore`
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Environments/IDE
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project artifacts
+.mlb_cache/
+outputs/
+*.xlsx
+*.csv
+
+# Keep only an example DK template
+!data/
+data/*
+!data/dk_template_YYYY-MM-DD.csv
+
+# Logs
+*.log

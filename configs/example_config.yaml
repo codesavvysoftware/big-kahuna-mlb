@@ -1,0 +1,55 @@
+# ---------- Big Kahuna Config (example) ----------
+# You can override any of these from the CLI; CLI wins over config.
+
+# Optional default date; if omitted we use today's date or --date
+date: 2025-09-03
+
+paths:
+  # DraftKings CSV (game_pk, away_ml, home_ml, total, O, U)
+  dk_csv: "data/dk_template_{date}.csv"
+  # Excel export (3–4 tabs)
+  export_xlsx: "outputs/big_kahuna_{date}.xlsx"
+
+league:
+  # League averages
+  rpg: 4.61
+  era: 4.15
+
+model:
+  # Bill James Pythagorean exponent
+  pyth_exp: 1.83
+  # Park factor scaling: "sqrt" (recommended) or "full"
+  park_mode: sqrt
+  # Bullpen handedness mix (approx. 2/3 RHP, 1/3 LHP)
+  bp_rhp_ratio: 0.67
+  # Clamp extreme ERAs so one outlier doesn’t explode outputs
+  era_cap_min: 2.0
+  era_cap_max: 7.5
+  # Use L/R splits vs starter/bullpen
+  use_hand_splits: true
+  # Starter IP bounds used in expected-runs calc
+  sp_ip_floor: 3.0
+  sp_ip_cap: 8.0
+
+blend:
+  enabled: true
+  # Weight for blending simple home% and modeled p_home
+  w: 0.70
+  auto_blend: true
+  # Edge threshold (percentage points) for “bet” columns
+  min_gap_pct: 0.03   # 3%
+
+schedule:
+  hydrate_probables: "probablePitcher(note)"
+  timezone: "America/New_York"
+
+performance:
+  enabled: true       # enable 4th tab
+  flat_unit: 1.0      # stake size per bet in units
+  include_ledger: true
+
+cache:
+  enabled: false      # keep false if you’re debugging
+  expire_today_sec: 120
+  expire_past_days: 30
+  expire_future_days: 6
