@@ -14,9 +14,12 @@ SEASON = 2025
 TODAY = date.today().isoformat()
 ET = ZoneInfo("America/New_York")
 
-LEAGUE_RPG = 4.61   # average runs per team per game
-LEAGUE_ERA = 4.15   # league average ERA
+LEAGUE_RPG = 4.75   # average runs per team per game
+LEAGUE_ERA = 4.48   # league average ERA
 PYTH_EXP    = 1.83  # Bill James Pythag exponent
+MLB_HOME_WIN_PCT = .55
+MLB_ROAD_WIN_PCT = 1.0 - MLB_HOME_WIN_PCT
+
 
 BALLPARK_FACTOR = {
     109: 1.03, 133: 1.09, 144: 1.00, 110: 1.01, 111: 1.04, 112: 0.96, 145: 0.98,
@@ -26,29 +29,126 @@ BALLPARK_FACTOR = {
     141: 1.00, 120: 1.01,
 }
 
+#BULLPEN_ERA = {
+#    109: 4.79, 133: 4.89, 144: 4.07, 110: 4.69, 111: 3.40, 112: 3.80, 145: 3.99,
+#    113: 3.90, 114: 3.61, 115: 5.10, 116: 3.97, 117: 3.78, 118: 3.72, 108: 4.84,
+#    119: 4.19, 146: 4.06, 158: 3.79, 142: 4.19, 121: 3.95, 147: 4.32, 143: 4.29,
+#    134: 4.11, 135: 2.87, 137: 3.31, 136: 3.82, 138: 3.65, 139: 3.82, 140: 3.61,
+#    141: 3.88, 120: 5.66,
+#}
+
 BULLPEN_ERA = {
-    109: 4.79, 133: 4.89, 144: 4.07, 110: 4.69, 111: 3.40, 112: 3.80, 145: 3.99,
-    113: 3.90, 114: 3.61, 115: 5.10, 116: 3.97, 117: 3.78, 118: 3.72, 108: 4.84,
-    119: 4.19, 146: 4.06, 158: 3.79, 142: 4.19, 121: 3.95, 147: 4.32, 143: 4.29,
-    134: 4.11, 135: 2.87, 137: 3.31, 136: 3.82, 138: 3.65, 139: 3.82, 140: 3.61,
-    141: 3.88, 120: 5.66,
+    133: 3.31, #ATH
+    134: 5.29, #PIT
+    135: 2.56, #SDP
+    136: 4.95, #SEA
+    137: 3.71, #SFG
+    138: 4.15, #STL
+    139: 3.66, #TBR 
+    140: 4.70, #TEX
+    141: 5.11, #TOR 
+    142: 5.79, #MIN
+    143: 4.28, #PHI
+    144: 3.17, #ATL 
+    145: 5.53, #CHW
+    146: 5.78, #MIA
+    147: 4.87, #NYY
+    158: 3.80, #MIL
+    108: 3.83, #LAA
+    109: 3.99, #ARI
+    110: 3.81, #BAL
+    111: 3.82, #BOS 
+    112: 4.41, #CHC 
+    113: 3.94, #CIN 
+    114: 3.95, #CLE
+    115: 5.81, #COL
+    116: 3.62, #DET
+    117: 4.76, #HOU
+    118: 3.46, #KCR 
+    119: 4.09, #LAD
+    120: 4.89, #WSN
+    121: 5.15, #NYM 
 }
-
 WRC_PLUS_VS_L = {
-    109: 0.99, 133: 1.04, 144: 0.91, 110: 0.84, 111: 1.06, 112: 1.07, 145: 0.93,
-    113: 0.76, 114: 0.79, 115: 0.76, 116: 1.15, 117: 1.12, 118: 0.81, 108: 0.93,
-    119: 1.10, 146: 0.76, 158: 1.07, 142: 0.90, 121: 0.97, 147: 1.20, 143: 1.03,
-    134: 0.76, 135: 0.93, 137: 0.74, 136: 1.01, 138: 0.95, 139: 0.79, 140: 0.80,
-    141: 1.15, 120: 0.83,
+    109: 1.24, #ARI 
+    133: 1.24, #ATH 
+    144: 1.11, #ATL
+    110: 1.02, #BAL
+    111: 0.98, #BOS
+    112: 0.87, #CHC
+    145: 1.10, #CHW
+    113: 0.81, #CIN
+    114: 0.72, #CLE
+    115: 1.03, #COL
+    116: 1.33, #DET
+    117: 0.95, #HOU 
+    118: 0.92, #KCR 
+    108: 1.21, #LAA
+    119: 0.99, #LAD 
+    146: 0.69, #MIA 
+    158: 1.25, #MIL
+    142: 1.04, #MIN
+    121: 1.37, #NYM
+    147: 1.34, #NYY 
+    143: 1.01, #PHI
+    134: 0.87, #PIT
+    135: 1.07, #SDP 
+    137: 0.85, #SFG
+    136: 0.99, #SEA
+    138: 1.16, #STL 
+    139: 0.75, #TBR
+    140: 1.07, #TEX
+    141: 1.48, #TOR
+    120: 0.59, #WSN
 }
 
+#WRC_PLUS_VS_L = {
+#    109: 0.99, 133: 1.04, 144: 0.91, 110: 0.84, 111: 1.06, 112: 1.07, 145: 0.93,
+#    113: 0.76, 114: 0.79, 115: 0.76, 116: 1.15, 117: 1.12, 118: 0.81, 108: 0.93,
+#    119: 1.10, 146: 0.76, 158: 1.07, 142: 0.90, 121: 0.97, 147: 1.20, 143: 1.03,
+#    134: 0.76, 135: 0.93, 137: 0.74, 136: 1.01, 138: 0.95, 139: 0.79, 140: 0.80,
+#    141: 1.15, 120: 0.83,
+#}
 WRC_PLUS_VS_R = {
-    109: 1.16, 133: 1.04, 144: 1.07, 110: 1.03, 111: 1.03, 112: 1.10, 145: 0.86,
-    113: 0.98, 114: 0.89, 115: 0.78, 116: 1.03, 117: 0.97, 118: 0.93, 108: 0.98,
-    119: 1.14, 146: 1.03, 158: 1.07, 142: 0.99, 121: 1.17, 147: 1.15, 143: 1.09,
-    134: 0.84, 135: 1.04, 137: 1.02, 136: 1.12, 138: 1.01, 139: 1.05, 140: 0.97,
-    141: 1.12, 120: 0.99,
+    109: 0.99, #ARI 
+    133: 1.05, #ATH 
+    144: 1.01, #ATL
+    110: 0.89, #BAL
+    111: 1.02, #BOS
+    112: 0.86, #CHC
+    145: 1.04, #CHW
+    113: 0.66, #CIN
+    114: 0.72, #CLE
+    115: 0.85, #COL
+    116: 0.98, #DET
+    117: 0.93, #HOU 
+    118: 1.11, #KCR 
+    108: 0.75, #LAA
+    119: 1.07, #LAD 
+    146: 1.06, #MIA 
+    158: 1.35, #MIL
+    142: 0.92, #MIN
+    121: 1.47, #NYM
+    147: 1.20, #NYY 
+    143: 1.25, #PHI
+    134: 1.03, #PIT
+    135: 1.11, #SDP 
+    137: 1.29, #SFG
+    136: 1.06, #SEA
+    138: 0.75, #STL 
+    139: 1.05, #TBR
+    140: 1.12, #TEX
+    141: 1.31, #TOR
+    120: 1.08, #WSN
 }
+
+#WRC_PLUS_VS_R = {
+#    109: 1.16, 133: 1.04, 144: 1.07, 110: 1.03, 111: 1.03, 112: 1.10, 145: 0.86,
+#   113: 0.98, 114: 0.89, 115: 0.78, 116: 1.03, 117: 0.97, 118: 0.93, 108: 0.98,
+#    119: 1.14, 146: 1.03, 158: 1.07, 142: 0.99, 121: 1.17, 147: 1.15, 143: 1.09,
+#    134: 0.84, 135: 1.04, 137: 1.02, 136: 1.12, 138: 1.01, 139: 1.05, 140: 0.97,
+#    141: 1.12, 120: 0.99,
+#}
 
 # Initial DK lines (can be overridden by CSV or prompts)
 DK_LINES = {
@@ -285,6 +385,7 @@ def todays_schedule(date_str, team_meta):
                 "home_pitcher": home_p, "home_pitcher_id": home_pid,
                 "away_pitcher": away_p, "away_pitcher_id": away_pid,
             })
+    
     return games, prob_ids
 
 # ---------- DK CSV (smart) ----------
@@ -408,6 +509,28 @@ def blend_logit(p_pyth, p_simple, w):
     z = w * logit(p_pyth) + (1.0 - w) * logit(p_simple)
     return inv_logit(z)
 
+def fetch_scores(date_str: str, games, finals_only=True):
+    """Attach scores/status to each scheduled game dict in-place."""
+    resp = statsapi.get("schedule", {"sportId": 1, "date": date_str, "hydrate": "linescore"})
+    pk_to_score = {}
+    for d in resp.get("dates", []):
+        for g in d.get("games", []):
+            pk = g["gamePk"]
+            status = g["status"]["detailedState"]
+            if finals_only and "Final" not in status:
+                pk_to_score[pk] = {"away_score": "TBD", "home_score": "TBD", "status": status}
+            else:
+                pk_to_score[pk] = {
+                    "away_score": g["teams"]["away"].get("score"),
+                    "home_score": g["teams"]["home"].get("score"),
+                    "status": status,
+                }
+
+    # merge into your game dicts
+    for g in games:
+        s = pk_to_score.get(g["game_pk"], {})
+        g.update(s)
+
 # =========================
 # Main
 # =========================
@@ -441,6 +564,8 @@ def main():
     if args.ask_dk:
         prompt_missing_dk(games, dk_runtime)
 
+    fetch_scores(args.date, games)
+
     rows = []
     for g in games:
         hk = ALIAS_MAP.get(g["home_team"], g["home_team"])
@@ -449,7 +574,9 @@ def main():
         home_win_pct = hm["Home_Win%"] if hm else None
         away_road_loss_pct = am["Road_Loss%"] if am else None
         simple_model = (home_win_pct + away_road_loss_pct)/2 if (home_win_pct is not None and away_road_loss_pct is not None) else None
-
+        home_to_mlb_factor = home_win_pct / MLB_HOME_WIN_PCT if (home_win_pct is not None and away_road_loss_pct is not None) else None
+        road_to_mlb_factor = (1.0 - away_road_loss_pct)/ MLB_ROAD_WIN_PCT if (home_win_pct is not None and away_road_loss_pct is not None) else None
+        
         # Probable pitcher details
         home_pid = g["home_pitcher_id"]; away_pid = g["away_pitcher_id"]
         home_hand = (pid_info.get(home_pid) or {}).get("hand")
@@ -516,6 +643,7 @@ def main():
         ):
             # required inputs present?
             required = [wrc_plus_sp, wrc_plus_bp, opp_sp_era, opp_bp_era, exp_ip, league_rpg, league_era, park]
+            
             if any(x is None for x in required):
                 return None
             # cast to floats and catch bad values
@@ -631,6 +759,51 @@ def main():
         if p_away_blend is not None and p_away_imp is not None:
             away_edge_blend_pp = round((p_away_blend - p_away_imp) * 100.0, 1)
 
+                # --- Results evaluation ---
+        model_prediction = ""
+        ou_result = ""
+        ou_prediction = ""
+        model_ou_prediction = ""
+        if g["away_score"] != "TBD" and g["home_score"] != "TBD":
+            road_runs = int(g["away_score"])
+            home_runs = int(g["home_score"])
+
+            # --- Moneyline (model vs actual winner) ---
+            actual_winner = "HOME" if home_runs > road_runs else "AWAY"
+            model_winner = None
+            if exp_runs_home is not None and exp_runs_away is not None:
+                model_winner = "HOME" if exp_runs_home > exp_runs_away else "AWAY"
+                expected_runs_total = exp_runs_home+exp_runs_away
+                total_scored = road_runs + home_runs
+                if expected_runs_total < dk_total :
+                    model_ou_prediction = "UNDER"
+                elif expected_runs_total > dk_total:
+                    model_ou_prediction = "OVER"
+                else:
+                    model_ou_prediction = "PUSH"
+
+                if total_scored < dk_total :
+                    ou_result = "UNDER"
+                elif total_scored > dk_total:
+                    ou_result = "OVER"
+                else:
+                    ou_result = "PUSH"
+
+                if model_ou_prediction != ou_result :
+                    ou_prediction = "LOST"0
+            print(f"        Final Score: {road_runs}-{home_runs} (Actual Winner: {actual_winner})")
+            print(f"        ou_result:{ou_result}")
+            print(f"        total_scored:{total_scored}")
+
+            if model_winner:
+                print(f"        Model Winner: {model_winner} → {model_prediction}")
+            if total_line is not None:
+                print(f"        Model Total Line: {total_line}, Actual Total: {total_scored} → {ou_result}")
+            if dk_total is not None:
+                print(f"        DK Total: {dk_total}, OU Prediction: {ou_prediction}")
+                
+
+
         rows.append({
             "Game_Date": g["Game_Date"], "Game_Time_ET": g["Game_Time_ET"], "game_pk": g["game_pk"],
             "away_team_short": g["away_team_short"], "home_team_short": g["home_team_short"],
@@ -676,7 +849,12 @@ def main():
             "p_home_blend": p_home_blend, "p_away_blend": p_away_blend,
             "ml_home_blend": ml_home_blend, "ml_away_blend": ml_away_blend,
             "home_edge_blend_pp": home_edge_blend_pp, "away_edge_blend_pp": away_edge_blend_pp,
-        })
+
+            #Results
+            "model_game_prediction" : model_prediction, "o/u prediction": ou_prediction,
+            "away_score": g.get("away_score"),
+            "home_score": g.get("home_score"),
+       })
 
     df = pd.DataFrame(rows)
 
@@ -737,7 +915,111 @@ def main():
     print("\n=== BLENDED PROBABILITIES (LOGIT) ===")
     print(df_blend.to_string(index=False, na_rep=""))
 
-    # -------- Export all tables to one Excel (optional) --------
+    # -------- Results --------
+    df_results = df[[
+        "Game_Date","Game_Time_ET",
+        "away_team_short","home_team_short",
+        "exp_runs_away","exp_runs_home","total_runs",
+        "p_home","p_away","ml_home",
+        "model_game_prediction","o/u prediction",
+    ]].copy()
+
+    # Actual scores
+    df_results["actual_away_score"] = df["away_score"]
+    df_results["actual_home_score"] = df["home_score"]
+
+    # Actual winner
+    def _winner(row):
+        if pd.isna(row["actual_home_score"]) or pd.isna(row["actual_away_score"]):
+            return ""
+        if row["actual_home_score"] > row["actual_away_score"]:
+            return "HOME"
+        elif row["actual_home_score"] < row["actual_away_score"]:
+            return "AWAY"
+        else:
+            return "TIE"
+    df_results["actual_winner"] = df_results.apply(_winner, axis=1)
+
+    # Model winner
+    def _model_winner(row):
+        if pd.isna(row["exp_runs_home"]) or pd.isna(row["exp_runs_away"]):
+            return ""
+        if row["exp_runs_home"] > row["exp_runs_away"]:
+            return "HOME"
+        elif row["exp_runs_home"] < row["exp_runs_away"]:
+            return "AWAY"
+        else:
+            return "TIE"
+    df_results["model_winner"] = df_results.apply(_model_winner, axis=1)
+
+    # O/U correctness
+    def _ou_correct(row):
+        if not row["o/u prediction"] or pd.isna(row["actual_home_score"]) or pd.isna(row["actual_away_score"]):
+            return ""
+        total_scored = row["actual_home_score"] + row["actual_away_score"]
+        if pd.isna(row["total_runs"]):
+            return ""
+        if total_scored < row["total_runs"]:
+            actual_ou = "UNDER"
+        elif total_scored > row["total_runs"]:
+            actual_ou = "OVER"
+        else:
+            actual_ou = "PUSH"
+
+        if row["o/u prediction"] == "PUSH" and actual_ou == "PUSH":
+            return "PUSH"
+        elif row["o/u prediction"] == "WON":
+            return "WON"
+        elif row["o/u prediction"] == "LOST":
+            return "LOST"
+        else:
+            return ""
+    df_results["o/u_prediction_correct"] = df_results.apply(_ou_correct, axis=1)
+
+    # --- Accuracy summary ---
+    ml_total = df_results["model_game_prediction"].isin(["WON", "LOST"]).sum()
+    ml_correct = (df_results["model_game_prediction"] == "WON").sum()
+    ml_acc = round(ml_correct / ml_total * 100, 1) if ml_total > 0 else None
+
+    ou_total = df_results["o/u_prediction_correct"].isin(["WON", "LOST"]).sum()
+    ou_correct = (df_results["o/u_prediction_correct"] == "WON").sum()
+    ou_acc = round(ou_correct / ou_total * 100, 1) if ou_total > 0 else None
+
+    summary_row = {
+        "Game_Date": "SUMMARY",
+        "Game_Time_ET": "",
+        "away_team_short": "",
+        "home_team_short": "",
+        "exp_runs_away": "",
+        "exp_runs_home": "",
+        "total_runs": "",
+        "p_home": "",
+        "p_away": "",
+        "ml_home": "",
+        "model_game_prediction": f"ML Acc: {ml_acc}%" if ml_acc is not None else "",
+        "o/u prediction": f"OU Acc: {ou_acc}%" if ou_acc is not None else "",
+        "actual_away_score": "",
+        "actual_home_score": "",
+        "actual_winner": "",
+        "model_winner": "",
+        "o/u_prediction_correct": "",
+    }
+
+    df_results = pd.concat([df_results, pd.DataFrame([summary_row])], ignore_index=True)
+
+    # Clean up formatting
+    df_results = df_results.sort_values(
+        ["Game_Date","Game_Time_ET","home_team_short"],
+        ignore_index=True
+    )
+
+    print("\n=== Results ===")
+    print(df_results.to_string(index=False, na_rep=""))
+    if ml_acc is not None:
+        print(f"\n[SUMMARY] Moneyline Accuracy: {ml_acc}% ({ml_correct}/{ml_total})")
+    if ou_acc is not None:
+        print(f"[SUMMARY] O/U Accuracy: {ou_acc}% ({ou_correct}/{ou_total})")
+   # -------- Export all tables to one Excel (optional) --------
     if args.export_xlsx:
         out_path = args.export_xlsx
         # create parent folder if needed
@@ -748,6 +1030,7 @@ def main():
             df_sched.to_excel(xl, sheet_name="Schedule_Bets", index=False)
             df_details.to_excel(xl, sheet_name="Model_Detail", index=False)
             df_blend.to_excel(xl, sheet_name="Blended", index=False)
+            df_results.to_excel(xl, sheet_name="Results", index=False)
         print(f"\nSaved Excel workbook → {out_path}")
    # -------- Optional exports --------
     # with pd.ExcelWriter(f"games_{args.date}.xlsx", engine="xlsxwriter") as xl:
