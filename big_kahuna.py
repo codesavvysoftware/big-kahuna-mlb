@@ -44,12 +44,12 @@ BULLPEN_ERA = {
     136: 4.95, #SEA
     137: 3.71, #SFG
     138: 4.15, #STL
-    139: 3.66, #TBR 
+    139: 3.66, #TBR
     140: 4.70, #TEX
-    141: 5.11, #TOR 
+    141: 5.11, #TOR
     142: 5.79, #MIN
     143: 4.28, #PHI
-    144: 3.17, #ATL 
+    144: 3.17, #ATL
     145: 5.53, #CHW
     146: 5.78, #MIA
     147: 4.87, #NYY
@@ -57,21 +57,21 @@ BULLPEN_ERA = {
     108: 3.83, #LAA
     109: 3.99, #ARI
     110: 3.81, #BAL
-    111: 3.82, #BOS 
-    112: 4.41, #CHC 
-    113: 3.94, #CIN 
+    111: 3.82, #BOS
+    112: 4.41, #CHC
+    113: 3.94, #CIN
     114: 3.95, #CLE
     115: 5.81, #COL
     116: 3.62, #DET
     117: 4.76, #HOU
-    118: 3.46, #KCR 
+    118: 3.46, #KCR
     119: 4.09, #LAD
     120: 4.89, #WSN
-    121: 5.15, #NYM 
+    121: 5.15, #NYM
 }
 WRC_PLUS_VS_L = {
-    109: 1.24, #ARI 
-    133: 1.24, #ATH 
+    109: 1.24, #ARI
+    133: 1.24, #ATH
     144: 1.11, #ATL
     110: 1.02, #BAL
     111: 0.98, #BOS
@@ -81,21 +81,21 @@ WRC_PLUS_VS_L = {
     114: 0.72, #CLE
     115: 1.03, #COL
     116: 1.33, #DET
-    117: 0.95, #HOU 
-    118: 0.92, #KCR 
+    117: 0.95, #HOU
+    118: 0.92, #KCR
     108: 1.21, #LAA
-    119: 0.99, #LAD 
-    146: 0.69, #MIA 
+    119: 0.99, #LAD
+    146: 0.69, #MIA
     158: 1.25, #MIL
     142: 1.04, #MIN
     121: 1.37, #NYM
-    147: 1.34, #NYY 
+    147: 1.34, #NYY
     143: 1.01, #PHI
     134: 0.87, #PIT
-    135: 1.07, #SDP 
+    135: 1.07, #SDP
     137: 0.85, #SFG
     136: 0.99, #SEA
-    138: 1.16, #STL 
+    138: 1.16, #STL
     139: 0.75, #TBR
     140: 1.07, #TEX
     141: 1.48, #TOR
@@ -110,8 +110,8 @@ WRC_PLUS_VS_L = {
 #    141: 1.15, 120: 0.83,
 #}
 WRC_PLUS_VS_R = {
-    109: 0.99, #ARI 
-    133: 1.05, #ATH 
+    109: 0.99, #ARI
+    133: 1.05, #ATH
     144: 1.01, #ATL
     110: 0.89, #BAL
     111: 1.02, #BOS
@@ -121,21 +121,21 @@ WRC_PLUS_VS_R = {
     114: 0.72, #CLE
     115: 0.85, #COL
     116: 0.98, #DET
-    117: 0.93, #HOU 
-    118: 1.11, #KCR 
+    117: 0.93, #HOU
+    118: 1.11, #KCR
     108: 0.75, #LAA
-    119: 1.07, #LAD 
-    146: 1.06, #MIA 
+    119: 1.07, #LAD
+    146: 1.06, #MIA
     158: 1.35, #MIL
     142: 0.92, #MIN
     121: 1.47, #NYM
-    147: 1.20, #NYY 
+    147: 1.20, #NYY
     143: 1.25, #PHI
     134: 1.03, #PIT
-    135: 1.11, #SDP 
+    135: 1.11, #SDP
     137: 1.29, #SFG
     136: 1.06, #SEA
-    138: 0.75, #STL 
+    138: 0.75, #STL
     139: 1.05, #TBR
     140: 1.12, #TEX
     141: 1.31, #TOR
@@ -385,7 +385,7 @@ def todays_schedule(date_str, team_meta):
                 "home_pitcher": home_p, "home_pitcher_id": home_pid,
                 "away_pitcher": away_p, "away_pitcher_id": away_pid,
             })
-    
+
     return games, prob_ids
 
 # ---------- DK CSV (smart) ----------
@@ -576,7 +576,7 @@ def main():
         simple_model = (home_win_pct + away_road_loss_pct)/2 if (home_win_pct is not None and away_road_loss_pct is not None) else None
         home_to_mlb_factor = home_win_pct / MLB_HOME_WIN_PCT if (home_win_pct is not None and away_road_loss_pct is not None) else None
         road_to_mlb_factor = (1.0 - away_road_loss_pct)/ MLB_ROAD_WIN_PCT if (home_win_pct is not None and away_road_loss_pct is not None) else None
-        
+
         # Probable pitcher details
         home_pid = g["home_pitcher_id"]; away_pid = g["away_pitcher_id"]
         home_hand = (pid_info.get(home_pid) or {}).get("hand")
@@ -615,7 +615,7 @@ def main():
             bp_rhp_ratio = 0.67
             wrc_vs_bp = wr * bp_rhp_ratio + wl * (1.0 - bp_rhp_ratio)
             return (wrc_vs_sp, wrc_vs_bp)
-        
+
         home_wrc_vs_opp_sp, home_wrc_vs_opp_bp = model_team_wrc( WRC_PLUS_VS_R.get(hid),  WRC_PLUS_VS_L.get(hid), home_hand)
         away_wrc_vs_opp_sp, away_wrc_vs_opp_bp = model_team_wrc( WRC_PLUS_VS_R.get(aid),  WRC_PLUS_VS_L.get(aid), away_hand)
 
@@ -623,7 +623,7 @@ def main():
             return(sp_era, bp_era)
         home_sp_era, home_bp_era = model_eras(home_sp_era, home_bp)
         away_sp_era, away_bp_era = model_eras(away_sp_era, away_bp)
-        
+
         def model_league_rpg():
             return LEAGUE_RPG
         league_rpg = model_league_rpg()
@@ -643,7 +643,7 @@ def main():
         ):
             # required inputs present?
             required = [wrc_plus_sp, wrc_plus_bp, opp_sp_era, opp_bp_era, exp_ip, league_rpg, league_era, park]
-            
+
             if any(x is None for x in required):
                 return None
             # cast to floats and catch bad values
@@ -697,7 +697,7 @@ def main():
 
         home_comb_def_era = combined_era(home_sp_era, home_exp_ip, home_bp)  # faced by AWAY offense
         away_comb_def_era = combined_era(away_sp_era, away_exp_ip, away_bp)  # faced by HOME offense
-        
+
 
         # Pythagorean win probabilities -> model ML
         def pyth(p_runs, o_runs):
@@ -773,6 +773,16 @@ def main():
             model_winner = None
             if exp_runs_home is not None and exp_runs_away is not None:
                 model_winner = "HOME" if exp_runs_home > exp_runs_away else "AWAY"
+                model_picked_fave = False
+                if model_winner == "HOME":
+                    if home_ml_dk < 0 :
+                        model_picked_fave = True
+                else:
+                    if away_ml_dk < 0 :
+                        model_picked_fave = True
+
+
+
                 expected_runs_total = exp_runs_home+exp_runs_away
                 total_scored = road_runs + home_runs
                 if expected_runs_total < dk_total :
@@ -790,7 +800,15 @@ def main():
                     ou_result = "PUSH"
 
                 if model_ou_prediction != ou_result :
-                    ou_prediction = "LOST"0
+                    ou_prediction = "LOST"
+
+                if model_winner:
+                    if model_winner == actual_winner:
+                        model_prediction = "WON"
+                    else:
+                        model_prediction = "LOST"
+
+
             print(f"        Final Score: {road_runs}-{home_runs} (Actual Winner: {actual_winner})")
             print(f"        ou_result:{ou_result}")
             print(f"        total_scored:{total_scored}")
@@ -801,7 +819,7 @@ def main():
                 print(f"        Model Total Line: {total_line}, Actual Total: {total_scored} → {ou_result}")
             if dk_total is not None:
                 print(f"        DK Total: {dk_total}, OU Prediction: {ou_prediction}")
-                
+
 
 
         rows.append({
@@ -851,7 +869,8 @@ def main():
             "home_edge_blend_pp": home_edge_blend_pp, "away_edge_blend_pp": away_edge_blend_pp,
 
             #Results
-            "model_game_prediction" : model_prediction, "o/u prediction": ou_prediction,
+            "model_game_prediction" : model_prediction,
+            "o/u prediction": ou_prediction, "fave_picked" : model_picked_fave,
             "away_score": g.get("away_score"),
             "home_score": g.get("home_score"),
        })
@@ -920,9 +939,36 @@ def main():
         "Game_Date","Game_Time_ET",
         "away_team_short","home_team_short",
         "exp_runs_away","exp_runs_home","total_runs",
-        "p_home","p_away","ml_home",
+        "p_home","p_away","ml_home","home_ml","away_ml","model_picked_fave",
         "model_game_prediction","o/u prediction",
     ]].copy()
+    ml_roi = 0.0
+    for idx, row in df_results.iterrows():
+        ml_roi_val = 0.0
+        if row["model_game_prediction"] == "WON":
+            if row["model_picked_fave"] :
+                if row["home_ml"] < 0 :
+                    ml_roi_val = -row["home_ml"]/(100.0-row["home_ml"])
+                else :
+                    ml_roi_val = -row["away_ml"]/(100.0-row["away_ml"])
+            else:
+                if row["home_ml"] < 0 :
+                    ml_roi_val = row["away_ml"]/100.0
+                else :
+                    ml_roi_val = row["home_ml"]/100.0
+        else:
+            if row["model_picked_fave"] :
+                if row["home_ml"] < 0 :
+                    ml_roi_val = row["home_ml"]/100.0
+                else :
+                    ml_roi_val = row["away_ml"]/100.0
+            else:
+                ml_roi_val = -1
+        ml_roi += ml_roi_val
+        print(f"\n[roi_val_used]: {ml_roi_val}")
+        print(f"\n[current ROI]: {ml_roi}")
+
+
 
     # Actual scores
     df_results["actual_away_score"] = df["away_score"]
@@ -1041,7 +1087,7 @@ def main():
     # Save combined DK set back out (merged CSV + prompts + built-ins)
     dk_out = []
     for g in games:
-        pk = g["game_pk"]; 
+        pk = g["game_pk"];
         d = dk_runtime.get(pk, {})
         dk_out.append({"game_pk": pk, "away_ml": d.get("away_ml"), "home_ml": d.get("home_ml"),
                        "total": d.get("total"), "O": d.get("O"), "U": d.get("U")})
