@@ -790,7 +790,7 @@ def main():
                     ou_result = "PUSH"
 
                 if model_ou_prediction != ou_result :
-                    ou_prediction = "LOST"0
+                    ou_prediction = "LOST"
             print(f"        Final Score: {road_runs}-{home_runs} (Actual Winner: {actual_winner})")
             print(f"        ou_result:{ou_result}")
             print(f"        total_scored:{total_scored}")
