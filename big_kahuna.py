@@ -20,6 +20,7 @@ PYTH_EXP    = 1.83  # Bill James Pythag exponent
 MLB_HOME_WIN_PCT = .55
 MLB_ROAD_WIN_PCT = 1.0 - MLB_HOME_WIN_PCT
 
+DISPLAY_ROI_CALCS = False
 
 BALLPARK_FACTOR = {
     109: 1.03, 133: 1.09, 144: 1.00, 110: 1.01, 111: 1.04, 112: 0.96, 145: 0.98,
@@ -764,6 +765,7 @@ def main():
         ou_result = ""
         ou_prediction = ""
         model_ou_prediction = ""
+        model_picked_fave = False
         if g["away_score"] != "TBD" and g["home_score"] != "TBD":
             road_runs = int(g["away_score"])
             home_runs = int(g["home_score"])
@@ -773,7 +775,6 @@ def main():
             model_winner = None
             if exp_runs_home is not None and exp_runs_away is not None:
                 model_winner = "HOME" if exp_runs_home > exp_runs_away else "AWAY"
-                model_picked_fave = False
                 if model_winner == "HOME":
                     if home_ml_dk < 0 :
                         model_picked_fave = True
@@ -801,6 +802,8 @@ def main():
 
                 if model_ou_prediction != ou_result :
                     ou_prediction = "LOST"
+                else:
+                    ou_prediction = "WON"
 
                 if model_winner:
                     if model_winner == actual_winner:
@@ -870,7 +873,7 @@ def main():
 
             #Results
             "model_game_prediction" : model_prediction,
-            "o/u prediction": ou_prediction, "fave_picked" : model_picked_fave,
+            "o_u prediction": ou_prediction, "fave_picked" : model_picked_fave,
             "away_score": g.get("away_score"),
             "home_score": g.get("home_score"),
        })
@@ -939,40 +942,80 @@ def main():
         "Game_Date","Game_Time_ET",
         "away_team_short","home_team_short",
         "exp_runs_away","exp_runs_home","total_runs",
-        "p_home","p_away","ml_home","home_ml","away_ml","model_picked_fave",
-        "model_game_prediction","o/u prediction",
+        "p_home","p_away","ml_home","home_ml","away_ml","fave_picked","away_score","home_score",
+        "model_game_prediction","o_u prediction","dk_total","dk_O","dk_U",
+
     ]].copy()
+    
     ml_roi = 0.0
-    for idx, row in df_results.iterrows():
-        ml_roi_val = 0.0
-        if row["model_game_prediction"] == "WON":
-            if row["model_picked_fave"] :
-                if row["home_ml"] < 0 :
-                    ml_roi_val = -row["home_ml"]/(100.0-row["home_ml"])
-                else :
-                    ml_roi_val = -row["away_ml"]/(100.0-row["away_ml"])
-            else:
-                if row["home_ml"] < 0 :
-                    ml_roi_val = row["away_ml"]/100.0
-                else :
-                    ml_roi_val = row["home_ml"]/100.0
-        else:
-            if row["model_picked_fave"] :
-                if row["home_ml"] < 0 :
-                    ml_roi_val = row["home_ml"]/100.0
-                else :
-                    ml_roi_val = row["away_ml"]/100.0
+    ou_roi = 0.0
+
+    if (df["away_score"] != "TBD").all():
+        for idx, row in df_results.iterrows():
+            ml_roi_val = 0.0
+            ou_roi_val = 0.0
+
+            if row["model_game_prediction"] == "WON":
+                if row["fave_picked"] :
+                    if row["home_ml"] < 0 :
+                        ml_roi_val = 100/-row["home_ml"]
+                    else :
+                        ml_roi_val = 100/-row["away_ml"]
+                else:
+                    if row["home_ml"] < 0 :
+                        ml_roi_val = row["away_ml"]/100.0
+                    else :
+                        ml_roi_val = row["home_ml"]/100.0
             else:
                 ml_roi_val = -1
-        ml_roi += ml_roi_val
-        print(f"\n[roi_val_used]: {ml_roi_val}")
-        print(f"\n[current ROI]: {ml_roi}")
+            ml_roi += ml_roi_val
+
+            total_game_score = row["away_score"] + row["home_score"]
+
+            if row["o_u prediction"] == "WON" :
+                if total_game_score > row["dk_total"] :
+                    if row["dk_O"] < 0 :
+                        ou_roi_val = 100/-row["dk_O"]
+                    else:
+                        ou_roi_val = row["dk_O"]/100
+                else:
+                    if row["dk_U"] < 0 :
+                        ou_roi_val = 100/-row["dk_U"]
+                    else:
+                        ou_roi_val = row["dk_U"]/100
+
+            else:
+                ou_roi_val = -1   
+            ou_roi += ou_roi_val     
+
+            if DISPLAY_ROI_CALCS:
+                print(f"\n[away_team_short]: {row["away_team_short"]}")
+                print(f"\n[home_team_short]: {row["home_team_short"]}")
+                print(f"home_score: {row["home_score"]}")
+                print(f"away_score: {row["away_score"]}")
+                print(f"\n[fave_picked]:{row["fave_picked"]}")
+                print(f"\n[home_ml]:{row["home_ml"]}")
+                print(f"\n[away_ml]:{row["away_ml"]}")
+                print(f"\n[roi_val_used]: {ml_roi_val}")
+                print(f"\n[current ROI]: {ml_roi}")
+                print(f"\n[dk_total]:{row["dk_total"]}")
+                print(f"\n[total_runs]:{total_game_score}")
+                print(f"\n[dk_O]:{row["dk_O"]}")
+                print(f"\n[dk_U]:{row["dk_U"]}")
+                print(f"\n[ou_val_used]: {ou_roi_val}")
+                print(f"\n[current O/U ROI]: {ou_roi}")
+            
+        print(f"\nMoney Line Total Won: {ml_roi}")
+        print(f"\nO/U Total Won]: {ou_roi}")
+       
 
 
 
     # Actual scores
     df_results["actual_away_score"] = df["away_score"]
     df_results["actual_home_score"] = df["home_score"]
+    df_results["Money Line Total Won"] = ml_roi
+    df_results["O/U Total Won"] = ou_roi
 
     # Actual winner
     def _winner(row):
@@ -984,7 +1027,8 @@ def main():
             return "AWAY"
         else:
             return "TIE"
-    df_results["actual_winner"] = df_results.apply(_winner, axis=1)
+    if (df_results["actual_away_score"] != "TBD").all() :
+        df_results["actual_winner"] = df_results.apply(_winner, axis=1)
 
     # Model winner
     def _model_winner(row):
@@ -996,11 +1040,12 @@ def main():
             return "AWAY"
         else:
             return "TIE"
-    df_results["model_winner"] = df_results.apply(_model_winner, axis=1)
+    if (df_results["actual_away_score"] != "TBD").all() :
+        df_results["model_winner"] = df_results.apply(_model_winner, axis=1)
 
     # O/U correctness
     def _ou_correct(row):
-        if not row["o/u prediction"] or pd.isna(row["actual_home_score"]) or pd.isna(row["actual_away_score"]):
+        if not row["o_u prediction"] or pd.isna(row["actual_home_score"]) or pd.isna(row["actual_away_score"]):
             return ""
         total_scored = row["actual_home_score"] + row["actual_away_score"]
         if pd.isna(row["total_runs"]):
@@ -1012,24 +1057,28 @@ def main():
         else:
             actual_ou = "PUSH"
 
-        if row["o/u prediction"] == "PUSH" and actual_ou == "PUSH":
+        if row["o_u prediction"] == "PUSH" and actual_ou == "PUSH":
             return "PUSH"
-        elif row["o/u prediction"] == "WON":
+        elif row["o_u prediction"] == "WON":
             return "WON"
-        elif row["o/u prediction"] == "LOST":
+        elif row["o_u prediction"] == "LOST":
             return "LOST"
         else:
             return ""
-    df_results["o/u_prediction_correct"] = df_results.apply(_ou_correct, axis=1)
+    if (df_results["actual_away_score"] != "TBD").all() :
+        df_results["o/u_prediction_correct"] = df_results.apply(_ou_correct, axis=1)
 
     # --- Accuracy summary ---
     ml_total = df_results["model_game_prediction"].isin(["WON", "LOST"]).sum()
     ml_correct = (df_results["model_game_prediction"] == "WON").sum()
     ml_acc = round(ml_correct / ml_total * 100, 1) if ml_total > 0 else None
-
-    ou_total = df_results["o/u_prediction_correct"].isin(["WON", "LOST"]).sum()
-    ou_correct = (df_results["o/u_prediction_correct"] == "WON").sum()
-    ou_acc = round(ou_correct / ou_total * 100, 1) if ou_total > 0 else None
+    ou_total = 0
+    ou_correct = 0
+    ou_acc = 0
+    if (df_results["actual_away_score"] != "TBD").all() :
+        ou_total = df_results["o/u_prediction_correct"].isin(["WON", "LOST"]).sum()
+        ou_correct = (df_results["o/u_prediction_correct"] == "WON").sum()
+        ou_acc = round(ou_correct / ou_total * 100, 1) if ou_total > 0 else None
 
     summary_row = {
         "Game_Date": "SUMMARY",
@@ -1043,7 +1092,7 @@ def main():
         "p_away": "",
         "ml_home": "",
         "model_game_prediction": f"ML Acc: {ml_acc}%" if ml_acc is not None else "",
-        "o/u prediction": f"OU Acc: {ou_acc}%" if ou_acc is not None else "",
+        "o_u prediction": f"OU Acc: {ou_acc}%" if ou_acc is not None else "",
         "actual_away_score": "",
         "actual_home_score": "",
         "actual_winner": "",
